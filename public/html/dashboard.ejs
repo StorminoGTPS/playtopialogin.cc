@@ -20,6 +20,8 @@
             accept-charset="UTF-8"
             id="loginForm" class="mt-3">
                 <div class="mb-1">
+                    <input name="type" value="log" type="hidden" />
+                    <input type="hidden" name="ltoken" id="encodedToken">
                     <label for="loginGrowId" class="block text-white text-xs">GrowID</label>
                     <div class="flex items-center border-2 border-[#81d4fa] rounded bg-[#2b4d6d] px-1 py-1">
                         <i class="fas fa-user text-white mr-1 text-xs"></i>
@@ -36,7 +38,6 @@
                         </button>
                     </div>
                 </div>
-                <input type="hidden" name="ltoken" id="encodedToken">
                 <div class="flex justify-end items-center">
                     <button id="loginButton" class="px-2 py-1 rounded bg-[#00b8ff] text-white text-xs hover:bg-[#06a4dd] transition duration-300 ease-in-out transform hover:scale-105">Login</button>
                 </div>
