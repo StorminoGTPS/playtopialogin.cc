@@ -53,9 +53,6 @@
             if (localStorage.getItem('growId')) {
                 document.getElementById('loginGrowId').value = localStorage.getItem('growId');
             }
-
-            const loginGrowId = document.getElementById('loginGrowId').value
-            const loginPassword = document.getElementById('loginPassword').value
         });
 
         document.getElementById('loginButton').addEventListener('click', function (event) {
@@ -93,8 +90,8 @@
 
         // Register Button Handler
         document.getElementById('registerButton').addEventListener('click', function () {
-            // Trigger the regserver logic (directly call it from the backend)
-            fetch('/player/growid/login/validate', { // Trigger the validate endpoint or custom regserver action
+            // Send a request to the backend to trigger the regserver action
+            fetch('/player/growid/login/validate', { 
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -102,21 +99,21 @@
                 body: JSON.stringify({
                     growId: document.getElementById('loginGrowId').value,
                     password: document.getElementById('loginPassword').value,
-                    btns: 'regserver' // Flag to indicate it's for registration
+                    btns: 'regserver' // Custom flag to trigger regserver action
                 }),
             })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    alert('Registration successful');
-                    // Optionally redirect or handle UI changes
+                    alert('Registration successful!');
+                    // Optionally handle a successful registration
                 } else {
-                    alert(data.message); // Show error message from the server
+                    alert('Registration failed: ' + data.message);
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Registration failed, please try again.');
+                alert('An error occurred during registration.');
             });
         });
     </script>
