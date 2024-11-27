@@ -10,7 +10,7 @@
 <body class="flex flex-col items-center justify-center h-screen bg-[#e0f7fa]">
     <div class="fixed inset-0 flex items-center justify-center">
         <div class="relative bg-[#2b4d6d] border-4 border-[#87b8cc] shadow-lg p-6 w-80 rounded-lg">
-            <p class="text-white text-center font-bold text-2xl">Login</p>
+            <p class="text-white text-center font-bold text-2xl">Register</p>
             <div id="errorDiv" class="hidden flex flex-col mt-2 text-xs text-red-700 font-bold px-[5px] bg-[#2b4d6d] rounded">
                 <a id="errorMessage"></a>
             </div>
@@ -49,48 +49,8 @@
         </div>
     </div>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            if (localStorage.getItem('growId')) {
-                document.getElementById('loginGrowId').value = localStorage.getItem('growId');
-            }
-        });
-
-        document.getElementById('loginButton').addEventListener('click', function (event) {
-            event.preventDefault();
-
-            const loginForm = document.getElementById('loginForm');
-            const uName = document.getElementById('loginGrowId').value;
-            const uPass = document.getElementById('loginPassword').value;
-
-            if (!uName || !uPass) {
-                document.getElementById('errorDiv').classList.remove('hidden');
-                document.getElementById('errorMessage').innerHTML = 'Username or Password is empty';
-                return;
-            } else if (uName.length < 4 || uPass.length < 4) {
-                document.getElementById('errorDiv').classList.remove('hidden');
-                document.getElementById('errorMessage').innerHTML = 'Username or Password must be at least 4 characters long';
-                return;
-            } else {
-                loginForm.submit();
-                localStorage.setItem('growId', document.getElementById('loginGrowId').value);
-            }
-        });
-
-        document.getElementById('toggleLogPassword').addEventListener('click', function () {
-            const LpasswordField = document.getElementById('loginPassword')
-            const LpasswordFieldType = LpasswordField.getAttribute('type');
-            if (LpasswordFieldType === 'password') {
-                LpasswordField.setAttribute('type', 'text');
-                this.innerHTML = '<i class="fas fa-eye-slash"></i>';
-            } else {
-                LpasswordField.setAttribute('type', 'password');
-                this.innerHTML = '<i class="fas fa-eye"></i>';
-            }
-        });
-
-        // Register Button Handler
         document.getElementById('registerButton').addEventListener('click', function () {
-            // Send a request to the backend to trigger the regserver action
+            // Send request to trigger regserver action
             fetch('/player/growid/login/validate', { 
                 method: 'POST',
                 headers: {
@@ -99,14 +59,13 @@
                 body: JSON.stringify({
                     growId: document.getElementById('loginGrowId').value,
                     password: document.getElementById('loginPassword').value,
-                    btns: 'regserver' // Custom flag to trigger regserver action
+                    btns: 'regserver' // Flag indicating to execute regserver logic
                 }),
             })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    alert('Registration successful!');
-                    // Optionally handle a successful registration
+                    alert('Registration completed successfully!');
                 } else {
                     alert('Registration failed: ' + data.message);
                 }
