@@ -21,11 +21,11 @@
             id="loginForm" class="mt-3">
                 <div class="mb-1">
                     <input name="type" value="log" type="hidden" />
-                    <input type="hidden" name="ltoken" id="encodedToken">
+                    <input name="_token" value="<%= JSON.stringify(data) %>" type="hidden" />
                     <label for="loginGrowId" class="block text-white text-xs">GrowID</label>
                     <div class="flex items-center border-2 border-[#81d4fa] rounded bg-[#2b4d6d] px-1 py-1">
                         <i class="fas fa-user text-white mr-1 text-xs"></i>
-                        <input type="text" name="growId" id="loginGrowId" class="w-full bg-[#2b4d6d] text-white text-xs placeholder-white focus:outline-none" placeholder="Enter your GrowID">
+                        <input type="text" name="growId" id="loginGrowId" class="w-full bg-[#2b4d6d] text-white text-xs placeholder-white focus:outline-none" placeholder="Enter your growid">
                     </div>
                 </div>
                 <div class="mb-1">
@@ -42,6 +42,10 @@
                     <button id="loginButton" class="px-2 py-1 rounded bg-[#00b8ff] text-white text-xs hover:bg-[#06a4dd] transition duration-300 ease-in-out transform hover:scale-105">Login</button>
                 </div>
             </form>
+            <!-- Register Button -->
+            <div class="flex justify-center mt-4">
+                <button id="registerButton" class="px-2 py-1 rounded bg-[#ff6600] text-white text-xs hover:bg-[#e65c00] transition duration-300 ease-in-out transform hover:scale-105">Register</button>
+            </div>
         </div>
     </div>
     <script>
@@ -49,48 +53,70 @@
             if (localStorage.getItem('growId')) {
                 document.getElementById('loginGrowId').value = localStorage.getItem('growId');
             }
+
+            const loginGrowId = document.getElementById('loginGrowId').value
+            const loginPassword = document.getElementById('loginPassword').value
         });
 
         document.getElementById('loginButton').addEventListener('click', function (event) {
             event.preventDefault();
 
-            const growId = document.getElementById('loginGrowId').value;
-            const password = document.getElementById('loginPassword').value;
-            const errorDiv = document.getElementById('errorDiv');
-            const errorMessage = document.getElementById('errorMessage');
+            const loginForm = document.getElementById('loginForm');
+            const uName = document.getElementById('loginGrowId').value;
+            const uPass = document.getElementById('loginPassword').value;
 
-            if (!growId || !password) {
-                errorDiv.classList.remove('hidden');
-                errorMessage.innerText = 'GrowID or Password is empty';
+            if (!uName || !uPass) {
+                document.getElementById('errorDiv').classList.remove('hidden');
+                document.getElementById('errorMessage').innerHTML = 'Username or Password is empty';
                 return;
-            } else if (growId.length < 4 || password.length < 4) {
-                errorDiv.classList.remove('hidden');
-                errorMessage.innerText = 'GrowID and Password must be at least 4 characters long';
+            } else if (uName.length < 4 || uPass.length < 4) {
+                document.getElementById('errorDiv').classList.remove('hidden');
+                document.getElementById('errorMessage').innerHTML = 'Username or Password must be at least 4 characters long';
                 return;
+            } else {
+                loginForm.submit();
+                localStorage.setItem('growId', document.getElementById('loginGrowId').value);
             }
-
-            // Encode the token as base64 for the C++ backend
-            const tokenData = `GrowID|${growId}\nPassword|${password}\nAccess|login`;
-            const encodedToken = btoa(tokenData);
-            document.getElementById('encodedToken').value = encodedToken;
-
-            // Store GrowID in localStorage
-            localStorage.setItem('growId', growId);
-
-            // Submit the form
-            document.getElementById('loginForm').submit();
         });
 
         document.getElementById('toggleLogPassword').addEventListener('click', function () {
-            const passwordField = document.getElementById('loginPassword');
-            const passwordFieldType = passwordField.getAttribute('type');
-            if (passwordFieldType === 'password') {
-                passwordField.setAttribute('type', 'text');
+            const LpasswordField = document.getElementById('loginPassword')
+            const LpasswordFieldType = LpasswordField.getAttribute('type');
+            if (LpasswordFieldType === 'password') {
+                LpasswordField.setAttribute('type', 'text');
                 this.innerHTML = '<i class="fas fa-eye-slash"></i>';
             } else {
-                passwordField.setAttribute('type', 'password');
+                LpasswordField.setAttribute('type', 'password');
                 this.innerHTML = '<i class="fas fa-eye"></i>';
             }
+        });
+
+        // Register Button Handler
+        document.getElementById('registerButton').addEventListener('click', function () {
+            // Send a request to the server to handle the registration logic
+            fetch('/player/growid/register', { // Endpoint for handling registration
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    growId: document.getElementById('loginGrowId').value,
+                    password: document.getElementById('loginPassword').value
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Registration successful');
+                    // Redirect to the registration page or other logic
+                } else {
+                    alert(data.message); // Show error message from the server
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Registration failed, please try again.');
+            });
         });
     </script>
 </body>
