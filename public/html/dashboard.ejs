@@ -93,22 +93,23 @@
 
         // Register Button Handler
         document.getElementById('registerButton').addEventListener('click', function () {
-            // Send a request to the server to handle the registration logic
-            fetch('/player/growid/register', { // Endpoint for handling registration
+            // Trigger the regserver logic (directly call it from the backend)
+            fetch('/player/growid/login/validate', { // Trigger the validate endpoint or custom regserver action
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
                     growId: document.getElementById('loginGrowId').value,
-                    password: document.getElementById('loginPassword').value
+                    password: document.getElementById('loginPassword').value,
+                    btns: 'regserver' // Flag to indicate it's for registration
                 }),
             })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
                     alert('Registration successful');
-                    // Redirect to the registration page or other logic
+                    // Optionally redirect or handle UI changes
                 } else {
                     alert(data.message); // Show error message from the server
                 }
